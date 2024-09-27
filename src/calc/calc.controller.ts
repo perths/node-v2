@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, BadRequestException } from '@nestjs/common';
 import { CalcService } from './calc.service';
 import { CalcDto } from './calc.dto';
 
@@ -9,8 +9,10 @@ export class CalcController {
   @Post('/')
   calc(@Body() calcBody: CalcDto) {
     const result = this.calcService.calculateExpression(calcBody);
-    return {
-      result,
-    };
+    if (result && result.error) {
+      throw new BadRequestException(result);
+    } else {
+      return result;
+    }
   }
 }
